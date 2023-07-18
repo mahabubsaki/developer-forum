@@ -5,19 +5,22 @@ import Image from '../icons/Image';
 import Button from '../common/Button';
 import PostModal from './PostModal';
 import TextArea from '../common/TextArea';
+import { useSelector } from 'react-redux';
+import { selectPost } from '@/redux/reducers/postSlice';
 
 
 const PostField = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
     const [text, setText] = useState('');
+    const { postBody } = useSelector(selectPost);
     return (
         <React.Fragment>
             <div className='bg-[#f1f1f1] rounded-lg p-6'>
                 <div className='flex gap-4 mb-4 items-center'>
                     <Avatar />
                     <div className='w-full'>
-                        <TextArea value={text} onFocus={handleOpenModal} placeholder='Share or ask something to everyone.?' autoSize={{ minRows: 3, maxRows: 5 }} />
+                        <TextArea value={postBody} onFocus={handleOpenModal} placeholder='Share or ask something to everyone.?' autoSize={{ minRows: 3, maxRows: 5 }} />
 
                     </div>
                 </div>
@@ -31,7 +34,7 @@ const PostField = () => {
                     </div>
                 </div>
             </div>
-            {modalOpen ? <PostModal text={text} setText={setText} modalOpen={modalOpen} setModalOpen={setModalOpen} /> : null}
+            {modalOpen ? <PostModal modalOpen={modalOpen} setModalOpen={setModalOpen} /> : null}
         </React.Fragment>
     );
 };
