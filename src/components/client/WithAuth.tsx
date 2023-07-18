@@ -1,6 +1,7 @@
 'use client';
 
 import { selectAuth, setLoading, setUser } from '@/redux/reducers/authSlice';
+import { Spin } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -10,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const WithAuth = ({ children }: { children: React.ReactNode; }) => {
 
     const { loading, user } = useSelector(selectAuth);
+
     const router = useRouter();
     const dispatch = useDispatch();
     useEffect(() => {
@@ -22,7 +24,9 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
                     },
                     baseURL: "http://localhost:5000/api/v1/users/user"
                 });
-                dispatch(setUser({ email: data.email, name: data.name, uid: data.uid }));
+
+                const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id };
+                dispatch(setUser(rUser));
             } catch (err) {
                 console.log(err);
                 if (err instanceof AxiosError) {
@@ -34,10 +38,12 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
             }
 
         }
-        isAuthenticated();
-    }, []);
+        if (!user) isAuthenticated();
+    }, [user]);
     if (loading) {
-        return <p>Loading...</p>;
+        return <div className='h-screen flex justify-center items-center'>
+            <Spin />
+        </div>;
     }
     if (!user) {
         router.push('/auth');

@@ -15,3 +15,9 @@ align-items: center;
     background: -webkit-linear-gradient(to right, #0ED2F7, #B2FEFA); 
     background: linear-gradient(to right, #0ED2F7, #B2FEFA); 
 }
+.auth-btn:hover{
+    background: #B2FEFA;  
+    background: -webkit-linear-gradient(to right,#B2FEFA , #0ED2F7); 
+    background: linear-gradient(to right, #B2FEFA,#0ED2F7 ); 
+
+}
