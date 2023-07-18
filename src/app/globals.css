@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.auth-main{
+    background: #B2FEFA;  
+    background: -webkit-linear-gradient(to right, #0ED2F7, #B2FEFA); 
+    background: linear-gradient(to right, #0ED2F7, #B2FEFA); 
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.auth-btn{
+    background: #B2FEFA;  
+    background: -webkit-linear-gradient(to right, #0ED2F7, #B2FEFA); 
+    background: linear-gradient(to right, #0ED2F7, #B2FEFA); 
+}
