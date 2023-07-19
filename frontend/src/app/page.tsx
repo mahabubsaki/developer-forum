@@ -8,13 +8,14 @@ import Home from '@/components/page/Home/Home';
 import getPosts from '@/fetchers/getPosts.fetcher';
 
 
+export const dynamic = 'force-dynamic';
+
 
 async function Page() {
   const posts = await getPosts();
   console.log({ num: posts.data });
   return (
     <WithAuth>
-      <p>{posts.data.length}</p>
       <Home posts={posts.data}></Home>
     </WithAuth>
   );
