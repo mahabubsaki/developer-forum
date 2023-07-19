@@ -1,7 +1,7 @@
 'use client';
 import Inputs from '@/components/common/Input';
 import { setUser } from '@/redux/reducers/authSlice';
-import { Spin } from 'antd';
+import { Select, Spin } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -12,11 +12,13 @@ import { useDispatch } from 'react-redux';
 interface ISubmitForm {
     name?: string;
     email?: string;
+    role?: "user" | "admin";
     password?: string;
 }
 const AuthForm = () => {
     const [auth, setAuth] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [batch, setBatch] = useState(null);
     const dispatch = useDispatch();
     const router = useRouter();
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,21 +30,24 @@ const AuthForm = () => {
             if (auth) {
                 data.email = target.loginEmail.value;
                 data.password = target.loginPass.value;
+                data.role = 'user';
                 const { data: reponse } = await axios({ method: 'POST', data, baseURL: "http://localhost:5000/api/v1/users/login" });
                 console.log(reponse);;
                 localStorage.setItem('token', reponse.data.token);
-                const x = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id };
-                console.log(x);
-                dispatch(setUser(x));
+                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role };
+
+                dispatch(setUser(rUser));
 
             } else {
                 data.name = target.signupName.value;
                 data.email = target.signupEmail.value;
                 data.password = target.signupPass.value;
+                data.role = 'user';
                 const { data: reponse } = await axios({ method: 'POST', data, baseURL: "http://localhost:5000/api/v1/users/signup" });
-                console.log(reponse);;
+
                 localStorage.setItem('token', reponse.data.token);
-                dispatch(setUser({ email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id }));
+                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role };
+                dispatch(setUser(rUser));
             }
             toast.success(`Hello folk, Welcome to the forum`);
             setTimeout(() => {
@@ -83,6 +88,7 @@ const AuthForm = () => {
                                 <Inputs size='large' name='signupEmail' className='py-[14px]' placeholder='Email Address' />
                                 <Inputs size='large' name='signupPass' className='py-[14px]' placeholder='Password' />
                                 <Inputs size='large' name='signupName' className='py-[14px]' placeholder='Name' />
+                                <Select placeholder="Choose your batch" allowClear className='w-full' value={batch} onChange={(e) => setBatch(e)} options={[{ label: "Batch-1", value: "Batch-1" }, { label: "Batch-2", value: "Batch-2" }, { label: "Batch-3", value: "Batch-3" }, { label: "Batch-4", value: "Batch-4" }, { label: "Batch-5", value: "Batch-5" }, { label: "Batch-6", value: "Batch-6" }, { label: "Batch-7", value: "Batch-7" }, { label: "Batch-8", value: "Batch-8" }]} />
                             </React.Fragment>
                         }
                     </div>

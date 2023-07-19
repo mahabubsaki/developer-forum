@@ -25,7 +25,7 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
                     baseURL: "http://localhost:5000/api/v1/users/user"
                 });
 
-                const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id };
+                const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id, role: data.data.role };
                 dispatch(setUser(rUser));
             } catch (err) {
                 console.log(err);

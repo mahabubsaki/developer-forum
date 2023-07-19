@@ -24,7 +24,7 @@ const PostModal = (props: Props) => {
     const { postBody, media, category, tags, loading } = useSelector(selectPost);
     const dispatch = useDispatch();
     const { user } = useSelector(selectAuth);
-    console.log(user);
+
     const handlePost = async () => {
         try {
             dispatch(setLoading(true));
@@ -42,7 +42,8 @@ const PostModal = (props: Props) => {
                 postBody,
                 category,
                 tags,
-                media: img
+                media: img,
+                user: user?.id
             };
             const { data } = await axios({ method: "POST", baseURL: "http://localhost:5000/api/v1/posts/create-post", data: postData });
             console.log(data);
