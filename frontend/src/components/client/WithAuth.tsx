@@ -22,7 +22,7 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
                     method: "GET", headers: {
                         Authorization: `Bearer ${token}`
                     },
-                    baseURL: "http://localhost:5000/api/v1/users/user"
+                    baseURL: "https://developer-forum-backend.vercel.app/api/v1/users/user"
                 });
 
                 const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id, role: data.data.role, batch: data.data.batch };
