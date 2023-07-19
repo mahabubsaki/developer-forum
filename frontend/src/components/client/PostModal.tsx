@@ -5,20 +5,24 @@ import TextArea from '../common/TextArea';
 import UploadMedia from './UploadMedia';
 import Button from '../common/Button';
 import Select from '../common/Select';
-import { selectPost, setLoading, setPostBody, setPostCategory, setPostTags } from '@/redux/reducers/postSlice';
+import { reset, selectPost, setLoading, setPostBody, setPostCategory, setPostTags } from '@/redux/reducers/postSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import uploadImgToCloudinary from '@/configs/cloudinery.config';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import { selectAuth } from '@/redux/reducers/authSlice';
+import { TPost } from '@/app/types';
 
 
 interface Props {
     modalOpen: boolean;
 
     setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setAllPosts: React.Dispatch<React.SetStateAction<TPost[]>>;
 
 }
+
+
 
 const PostModal = (props: Props) => {
     const { postBody, media, category, tags, loading } = useSelector(selectPost);
@@ -46,16 +50,23 @@ const PostModal = (props: Props) => {
                 user: user?.id
             };
             const { data } = await axios({ method: "POST", baseURL: "http://localhost:5000/api/v1/posts/create-post", data: postData });
-            console.log(data);
+            console.log(data.data);
+            props.setAllPosts((pre) => {
+                return [...pre, data.data];
+            });
+            dispatch(setLoading(false));
+            toast.success("Posted your issue successfully");
         }
-
         catch (err) {
             if (err instanceof Error) {
                 toast.error(err.message);
             }
         }
         finally {
-            dispatch(setLoading(false));
+            dispatch(reset());
+            setTimeout(() => {
+                props.setModalOpen(false);
+            }, 100);
         }
     };
     return (
@@ -73,7 +84,13 @@ const PostModal = (props: Props) => {
             <div className='flex flex-col gap-3'>
                 <TextArea onChange={(e) => dispatch(setPostBody(e.target.value))} value={postBody} bordered={false} className={`${postBody.length > 40 ? 'text-base' : 'text-2xl'}`} placeholder="Share or ask something to everyone.?" autoSize={{ minRows: 4, maxRows: 7 }} />
                 <Select onChange={(e) => dispatch(setPostCategory(e))} defaultValue={category ? category : null} placeholder='Choose a category' className='w-full' allowClear options={[{ label: "Programming Languages", value: "Programming Languages" }, { label: "Front-end Development", value: "Front-end Development" }, { label: "Back-end Development", value: "Back-end Development" }, { label: "Database Management", value: "Database Management" }, { label: "Mobile App Development", value: "Mobile App Development" }, { label: "DevOps", value: "DevOps" }, { label: "Version Control", value: "Version Control" }, { label: "Cloud Computing", value: "Cloud Computing" }, { label: "Operating Systems", value: "Operating Systems" }, { label: "Game Development", value: "Game Development" }]} />
-                <Select onChange={(e) => dispatch(setPostTags(e))} placeholder="Please choose a tag (maximum 5)" mode='multiple' allowClear className='w-full' defaultValue={tags} options={[{ label: "JavaScript", value: "JavaScript" }, { label: "Java", value: "Java" }, { label: "Python", value: "Python" }, { label: "HTML", value: "HTML" }, { label: "CSS", value: "CSS" }, { label: "TailwindCSS", value: "TailwindCSS" }, { label: "Node.js", value: "Node.js" }, { label: "PHP", value: "PHP" }, { label: "Django", value: "Django" }, { label: "Docker", value: "Docker" }, { label: "Kubernetes", value: "Kubernetes" }, { label: "Jenkins", value: "Jenkins" }, { label: "GitHub", value: "GitHub" }, { label: "Bitbucket", value: "Bitbucket" }, { label: "GitBucket", value: "GitBucket" }, { label: "React Native", value: "React Native" }, { label: "Flutter", value: "Flutter" }, { label: "Swift", value: "Swift" }, { label: "MySQL", value: "MySQL" }, { label: "MongoDB", value: "MongoDB" }, { label: "PostgreSQL", value: "PostgreSQL" }, { label: "AWS", value: "AWS" }, { label: "Microsoft Azure", value: "Microsoft Azure" }, { label: "Google Cloud Platform", value: "Google Cloud Platform" }, { label: "Linux", value: "Linux" }, { label: "Windows", value: "Windows" }, { label: "macOS", value: "macOS" }, { label: " Unity", value: " Unity" }, { label: "Unreal Engine", value: "Unreal Engine" }, { label: "CryEngine3", value: "CryEngine3" }]} />
+                <Select maxTagCount={5} value={tags} onChange={(e: any[]) => {
+                    if (e.length <= 5) {
+                        dispatch(setPostTags(e));
+                    } else {
+                        toast.error("You can't select more than 5 tags");
+                    }
+                }} placeholder="Please choose a tag (maximum 5)" mode='multiple' allowClear className='w-full' options={[{ label: "JavaScript", value: "JavaScript" }, { label: "Java", value: "Java" }, { label: "Python", value: "Python" }, { label: "HTML", value: "HTML" }, { label: "CSS", value: "CSS" }, { label: "TailwindCSS", value: "TailwindCSS" }, { label: "Node.js", value: "Node.js" }, { label: "PHP", value: "PHP" }, { label: "Django", value: "Django" }, { label: "Docker", value: "Docker" }, { label: "Kubernetes", value: "Kubernetes" }, { label: "Jenkins", value: "Jenkins" }, { label: "GitHub", value: "GitHub" }, { label: "Bitbucket", value: "Bitbucket" }, { label: "GitBucket", value: "GitBucket" }, { label: "React Native", value: "React Native" }, { label: "Flutter", value: "Flutter" }, { label: "Swift", value: "Swift" }, { label: "MySQL", value: "MySQL" }, { label: "MongoDB", value: "MongoDB" }, { label: "PostgreSQL", value: "PostgreSQL" }, { label: "AWS", value: "AWS" }, { label: "Microsoft Azure", value: "Microsoft Azure" }, { label: "Google Cloud Platform", value: "Google Cloud Platform" }, { label: "Linux", value: "Linux" }, { label: "Windows", value: "Windows" }, { label: "macOS", value: "macOS" }, { label: " Unity", value: " Unity" }, { label: "Unreal Engine", value: "Unreal Engine" }, { label: "CryEngine3", value: "CryEngine3" }]} />
                 <UploadMedia />
             </div>
         </Modal>

@@ -5,13 +5,17 @@ import PostContainer from '@/components/page/Home/PostContainer';
 import Sidebar from '@/components/page/Home/Sidebar';
 import WithAuth from '@/components/client/WithAuth';
 import Home from '@/components/page/Home/Home';
+import getPosts from '@/fetchers/getPosts.fetcher';
 
 
 
-function Page() {
+async function Page() {
+  const posts = await getPosts();
+  console.log({ num: posts.data });
   return (
     <WithAuth>
-      <Home></Home>
+      <p>{posts.data.length}</p>
+      <Home posts={posts.data}></Home>
     </WithAuth>
   );
 }

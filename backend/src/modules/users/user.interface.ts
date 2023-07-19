@@ -6,6 +6,7 @@ export interface IUser extends Document {
     uid: string;
     name: string;
     role: "user" | "admin";
+    batch: string;
 }
 export interface IUserWithToken extends IUser {
     token: string;

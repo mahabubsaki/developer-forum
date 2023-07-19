@@ -10,4 +10,5 @@ export interface IUser {
     uid: string;
     id: string;
     role: string;
+    batch: string;
 }

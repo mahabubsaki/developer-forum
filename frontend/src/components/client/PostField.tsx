@@ -7,9 +7,12 @@ import PostModal from './PostModal';
 import TextArea from '../common/TextArea';
 import { useSelector } from 'react-redux';
 import { selectPost } from '@/redux/reducers/postSlice';
+import { TPost } from '@/app/types';
+interface Props {
+    setAllPosts: React.Dispatch<React.SetStateAction<TPost[]>>;
+}
 
-
-const PostField = () => {
+const PostField = ({ setAllPosts }: Props) => {
     const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
     const [text, setText] = useState('');
@@ -34,7 +37,7 @@ const PostField = () => {
                     </div>
                 </div>
             </div>
-            {modalOpen ? <PostModal modalOpen={modalOpen} setModalOpen={setModalOpen} /> : null}
+            {modalOpen ? <PostModal setAllPosts={setAllPosts} modalOpen={modalOpen} setModalOpen={setModalOpen} /> : null}
         </React.Fragment>
     );
 };

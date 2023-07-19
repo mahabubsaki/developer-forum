@@ -1,10 +1,15 @@
+import { TPost } from '@/app/types';
 import PostField from '@/components/client/PostField';
 import React from 'react';
 
-const PostContainer = () => {
+interface Props {
+    setAllPosts: React.Dispatch<React.SetStateAction<TPost[]>>;
+}
+
+const PostContainer = ({ setAllPosts }: Props) => {
     return (
         <div>
-            <PostField />
+            <PostField setAllPosts={setAllPosts} />
         </div>
     );
 };

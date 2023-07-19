@@ -8,6 +8,10 @@ export const UserMongooseSchema = new Schema<IUser, IUserMethods, IUserStatics>(
         required: true,
         unique: true,
     },
+    batch: {
+        type: String,
+        required: true
+    },
     role: {
         type: String,
         required: true,
@@ -47,13 +51,12 @@ export const UserZodSchema = z.object({
         message: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one digit',
     }),
     name: z.string(),
-    role: z.enum(['user', 'admin'])
+    role: z.enum(['user', 'admin']),
+    batch: z.string()
 });
 
 
 export const LoginZodSchema = z.object({
     email: z.string().email(),
-    password: z.string().refine((value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value), {
-        message: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one digit',
-    })
+    password: z.string()
 }).strict();

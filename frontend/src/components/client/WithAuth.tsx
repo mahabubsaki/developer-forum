@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const WithAuth = ({ children }: { children: React.ReactNode; }) => {
 
     const { loading, user } = useSelector(selectAuth);
-
+    console.log({ user });
     const router = useRouter();
     const dispatch = useDispatch();
     useEffect(() => {
@@ -25,7 +25,7 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
                     baseURL: "http://localhost:5000/api/v1/users/user"
                 });
 
-                const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id, role: data.data.role };
+                const rUser = { email: data.data.email, name: data.data.name, uid: data.data.uid, id: data.data._id, role: data.data.role, batch: data.data.batch };
                 dispatch(setUser(rUser));
             } catch (err) {
                 console.log(err);
@@ -40,13 +40,18 @@ const WithAuth = ({ children }: { children: React.ReactNode; }) => {
         }
         if (!user) isAuthenticated();
     }, [user]);
+
+    useEffect(() => {
+        if (!user && !loading) {
+            router.push('/auth');
+        }
+    }, [loading, user, router]);
     if (loading) {
         return <div className='h-screen flex justify-center items-center'>
             <Spin />
         </div>;
     }
     if (!user) {
-        router.push('/auth');
         return null;
     }
     return <React.Fragment>

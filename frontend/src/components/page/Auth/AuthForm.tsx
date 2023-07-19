@@ -1,6 +1,6 @@
 'use client';
 import Inputs from '@/components/common/Input';
-import { setUser } from '@/redux/reducers/authSlice';
+import { setUser, setLoading as setAuthLoading } from '@/redux/reducers/authSlice';
 import { Select, Spin } from 'antd';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
@@ -14,11 +14,12 @@ interface ISubmitForm {
     email?: string;
     role?: "user" | "admin";
     password?: string;
+    batch?: string;
 }
 const AuthForm = () => {
     const [auth, setAuth] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [batch, setBatch] = useState(null);
+    const [batch, setBatch] = useState("Batch-8");
     const dispatch = useDispatch();
     const router = useRouter();
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,11 +31,10 @@ const AuthForm = () => {
             if (auth) {
                 data.email = target.loginEmail.value;
                 data.password = target.loginPass.value;
-                data.role = 'user';
                 const { data: reponse } = await axios({ method: 'POST', data, baseURL: "http://localhost:5000/api/v1/users/login" });
                 console.log(reponse);;
                 localStorage.setItem('token', reponse.data.token);
-                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role };
+                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role, batch: reponse.data.batch };
 
                 dispatch(setUser(rUser));
 
@@ -43,16 +43,17 @@ const AuthForm = () => {
                 data.email = target.signupEmail.value;
                 data.password = target.signupPass.value;
                 data.role = 'user';
+                data.batch = batch;
                 const { data: reponse } = await axios({ method: 'POST', data, baseURL: "http://localhost:5000/api/v1/users/signup" });
 
                 localStorage.setItem('token', reponse.data.token);
-                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role };
+                const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role, batch: reponse.data.batch };
                 dispatch(setUser(rUser));
             }
             toast.success(`Hello folk, Welcome to the forum`);
-            setTimeout(() => {
-                router.push('/');
-            }, 1000);
+            dispatch(setAuthLoading(false));
+            router.push('/');
+
         }
         catch (err) {
             console.log(err);
@@ -97,7 +98,7 @@ const AuthForm = () => {
                         <Spin />
                     </div> : null}
                     <button disabled={loading} type='submit' className={`auth-btn w-full py-3 font-medium`}>
-                        SignUp
+                        Get Start
                     </button>
                 </form>
 

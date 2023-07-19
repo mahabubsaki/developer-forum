@@ -24,11 +24,30 @@ export const PostMongooseSchema = new Schema<IPost, IPostMethods, IPostStatics>(
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    status: {
+        type: String,
+        enum: ["In Progress", "Resolved", "Unresolved", "Rejected"],
+        default: "In Progress"
+    },
+    priority: {
+        type: String,
+        enum: ["High", "Low", "Medium"],
+        default: "Medium"
+    },
+    comments: {
+        type: Number,
+        default: 0
+    },
+    upvotes: {
+        type: Number,
+        default: 0
     }
 }, {
     toJSON: {
         virtuals: true
-    }
+    },
+    timestamps: true
 });
 
 export const PostZodSchema = z.object({
