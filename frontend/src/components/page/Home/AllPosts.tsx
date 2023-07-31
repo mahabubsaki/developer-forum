@@ -21,7 +21,7 @@ const AllPosts = ({ posts, setAllPosts }: Props) => {
                 user: id,
                 postId: postId
             };
-            const data = await axios({ method: 'POST', data: commentData, baseURL: 'https://developer-forum-backend.vercel.app/api/v1/comments/create-comment' });
+            const data = await axios({ method: 'POST', data: commentData, baseURL: 'http://localhost:5000/api/v1/comments/create-comment' });
             retrunData = data.data.data;
             toast.success(data.data.message);
             setLoading(false);

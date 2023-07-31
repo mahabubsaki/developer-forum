@@ -49,7 +49,7 @@ const PostModal = (props: Props) => {
                 media: img,
                 user: user?.id
             };
-            const { data } = await axios({ method: "POST", baseURL: "https://developer-forum-backend.vercel.app/api/v1/posts/create-post", data: postData });
+            const { data } = await axios({ method: "POST", baseURL: "http://localhost:5000/api/v1/posts/create-post", data: postData });
 
             props.setAllPosts((pre) => {
                 return [...pre, data.data];

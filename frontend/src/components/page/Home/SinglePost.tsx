@@ -26,7 +26,7 @@ const SinglePost = ({ post, setSinglePost, handlePostComment, posts, setAllPosts
 
     const handleOpenSinglePostModal = async (id: string) => {
         try {
-            const data = await axios({ method: 'GET', baseURL: `https://developer-forum-backend.vercel.app/api/v1/posts/${id}` });
+            const data = await axios({ method: 'GET', baseURL: `http://localhost:5000/api/v1/posts/${id}` });
             setSinglePost(data.data.data);
         } catch (err) {
             if (err instanceof AxiosError) {
