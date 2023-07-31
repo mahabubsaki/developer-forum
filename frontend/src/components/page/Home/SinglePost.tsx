@@ -1,65 +1,66 @@
-/* eslint-disable @next/next/no-img-element */
+
 'use client';
-import Slider from "react-slick";
-import { TPost } from '@/app/types';
-import React from 'react';
-import { AiOutlineClockCircle, AiOutlineCalendar } from 'react-icons/ai';
-import timeDifference from "@/app/utils/timeDifference";
-import formatDate from "@/app/utils/formatDate";
-import { BiGroup } from 'react-icons/bi';
-import noImage from '../../../assets/no-image.png';
-import { BsBookmark, BsThreeDots } from "react-icons/bs";
-import { postHourSpan } from "@/app/utils/postHourSpan";
+import { TPost, TPostWithComment, hanldePostCommentType } from '@/app/types';
+import React, { useState } from 'react';
+import { BiMessageAltDetail } from 'react-icons/bi';
+import Inputs from "@/components/common/Input";
+import { useSelector } from "react-redux";
+import { selectAuth } from "@/redux/reducers/authSlice";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-hot-toast";
+import { Spin } from "antd";
+import CommonPostPart from "./CommonPostPart";
 
 interface Props {
     post: TPost;
+    setSinglePost: React.Dispatch<React.SetStateAction<TPostWithComment | null>>;
+    handlePostComment: hanldePostCommentType;
+    setAllPosts: React.Dispatch<React.SetStateAction<TPost[]>>;
+    posts: TPost[];
 }
 
-const SinglePost = ({ post }: Props) => {
-    // const {} = useSelector
+const SinglePost = ({ post, setSinglePost, handlePostComment, posts, setAllPosts }: Props) => {
+    const [loading, setLoading] = useState(false);
+    const [comment, setComment] = useState('');
+    const { user } = useSelector(selectAuth);
+
+    const handleOpenSinglePostModal = async (id: string) => {
+        try {
+            const data = await axios({ method: 'GET', baseURL: `https://developer-forum-backend.vercel.app/api/v1/posts/${id}` });
+            setSinglePost(data.data.data);
+        } catch (err) {
+            if (err instanceof AxiosError) {
+                console.log(err);
+                toast.error(err.response?.data.errorMessages[0]?.message);
+            }
+        }
+    };
+
+    const handleSinglePostComment = async () => {
+        const { createResult, updateResult } = await handlePostComment(comment, user?.id, post.id, setLoading, setComment, undefined, true) || {};
+        if (updateResult) {
+            const index = posts.findIndex(each => each.id === updateResult?.id);
+
+            const copyArray = [...posts];
+            copyArray.splice(index, 1, updateResult);
+            setAllPosts(copyArray);
+        }
+    };
     return (
         <div className="bg-[#F1F1F1] rounded-2xl">
-            <section className="p-6">
-                <div className="flex justify-between">
-                    <div className=" gap-4 flex flex-1">
-                        <span className="w-[56px] block h-[56px]  rounded-full bg-[#CECECE]"></span>
-                        <div>
-                            <p className="text-lg text-black mb-2 font-semibold">{post.user.name}</p>
-                            <div className="flex gap-2">
-                                <div className="flex gap-1 items-center text-[rgba(0,0,0,0.50)]">
-                                    <AiOutlineClockCircle className="text-lg" />
-                                    <p className="text-sm">{timeDifference(post.createdAt)}</p>
-                                </div>
-                                <div className="flex gap-1 items-center text-[rgba(0,0,0,0.50)]">
-                                    <AiOutlineCalendar className="text-lg" />
-                                    <p className="text-sm">{formatDate(post.createdAt)}</p>
-                                </div>
-                                <div className="flex gap-1 items-center text-[rgba(0,0,0,0.50)]">
-                                    <BiGroup className="text-xl" />
-                                    <p className="text-sm">{post.user.batch}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className=" flex justify-end gap-5 items-center flex-1">
-                        <p className="bg-[#cdbcbc] h-fit py-[5px] px-[10px] text-[14px]">{postHourSpan(post.createdAt, 1) ? 'New' : postHourSpan(post.createdAt, 5) ? 'Recent' : 'Old'}</p>
-                        <p className="bg-[#CFCBCB] h-fit py-[5px] px-[10px] text-[14px]">{post.status}</p>
-                        <BsBookmark className="text-xl" />
-                        <BsThreeDots />
-                    </div>
-                </div>
-            </section>
-            <h1>s</h1>
-            <div className="mb-6">
-                {post.media?.length ? <Slider arrows dots>
-                    {post.media?.map((each, idx) => {
-                        return <div className="h-[400px] thumbnail bg-slate-400" key={idx}>
-                            <img src={each} loading="lazy" className="w-full  backdrop-blur-md object-scale-down h-full" alt="" />
-                        </div>;
-                    })}
-                </Slider> : <img loading="lazy" className="w-full object-scale-down h-[400px]" src={noImage.src} alt="empty-image" />}
+            <CommonPostPart name={post.user.name} createdAt={post.createdAt} batch={post.user.batch} status={post.status} postBody={post.postBody} media={post.media} />
+            <div className="m-6 pb-6 border-b-2 border-[rgba(0, 0, 0, 0.20)]">
+                <p onClick={() => handleOpenSinglePostModal(post.id)} className="flex gap-4 items-center  hover:border-b hover:border-black w-fit pb-[2px] cursor-pointer border-b border-transparent"><BiMessageAltDetail className="text-xl" />
+                    <span>{post.comments} comment</span></p>
             </div>
-            <p className="border">s</p>
+            <div className="flex mx-6 mb-6 gap-4">
+                <span className="w-[56px] block h-[56px]  rounded-full bg-[#CECECE]"></span>
+                <Inputs value={comment} onChange={(e) => setComment(e.target.value)} onPressEnter={handleSinglePostComment} size="small" className="bg-[#DFDFDF] rounded-3xl pl-6 text-opacity-50" placeholder="Write a Comment" />
+
+            </div>
+            {loading ? <div className="flex justify-center mb-5">
+                <Spin />
+            </div> : null}
         </div>
     );
 };

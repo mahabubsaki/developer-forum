@@ -12,11 +12,10 @@ interface Props {
 
 const PostContainerWrapper = ({ posts }: Props) => {
     const [allPosts, setAllPosts] = useState(posts);
-    console.log(posts);
     return (
         <React.Fragment>
             <PostContainer setAllPosts={setAllPosts} />
-            <AllPosts posts={allPosts} />
+            <AllPosts posts={allPosts} setAllPosts={setAllPosts} />
         </React.Fragment>
     );
 };

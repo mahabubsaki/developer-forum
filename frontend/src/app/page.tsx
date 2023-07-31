@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 async function Page() {
   const posts = await getPosts();
-  console.log({ num: posts.data });
+
   return (
     <WithAuth>
       <Home posts={posts.data}></Home>

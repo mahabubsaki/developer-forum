@@ -50,7 +50,7 @@ const PostModal = (props: Props) => {
                 user: user?.id
             };
             const { data } = await axios({ method: "POST", baseURL: "https://developer-forum-backend.vercel.app/api/v1/posts/create-post", data: postData });
-            console.log(data.data);
+
             props.setAllPosts((pre) => {
                 return [...pre, data.data];
             });
@@ -64,6 +64,7 @@ const PostModal = (props: Props) => {
         }
         finally {
             dispatch(reset());
+            dispatch(setLoading(false));
             setTimeout(() => {
                 props.setModalOpen(false);
             }, 100);

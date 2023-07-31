@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 const WithAuth = ({ children }: { children: React.ReactNode; }) => {
 
     const { loading, user } = useSelector(selectAuth);
-    console.log({ user });
     const router = useRouter();
     const dispatch = useDispatch();
     useEffect(() => {

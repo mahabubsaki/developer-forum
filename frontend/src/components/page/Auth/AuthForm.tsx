@@ -32,7 +32,7 @@ const AuthForm = () => {
                 data.email = target.loginEmail.value;
                 data.password = target.loginPass.value;
                 const { data: reponse } = await axios({ method: 'POST', data, baseURL: "https://developer-forum-backend.vercel.app/api/v1/users/login" });
-                console.log(reponse);;
+
                 localStorage.setItem('token', reponse.data.token);
                 const rUser = { email: reponse.data.email, name: reponse.data.name, uid: reponse.data.uid, id: reponse.data._id, role: reponse.data.role, batch: reponse.data.batch };
 

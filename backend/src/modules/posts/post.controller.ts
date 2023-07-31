@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
-import { IPost } from "./post.interface";
-import { createPost, getAllPost } from "./post.service";
+import { IPost, IPostWithComment } from "./post.interface";
+import { createPost, getAllPost, getSinglePostWithComment } from "./post.service";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 
@@ -24,5 +24,16 @@ export const getAllPostsController = catchAsync(async (req: Request, res: Respon
         success: true,
         data: result,
         message: "All posts retrieved successfully"
+    });
+});
+
+export const getSinglePostWithCommentController = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await getSinglePostWithComment(id);
+    sendResponse<IPostWithComment>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        data: result,
+        message: `Post retrieved with id ${id}`
     });
 });
